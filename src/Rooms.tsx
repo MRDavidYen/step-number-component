@@ -10,9 +10,9 @@ function RoomAllocation({ ...settings }: IRoomAllocationProperty) {
         let newVal = parseInt(e.target.value);
         let newRoom = [...roomState.rooms];
 
-        if(isAdult) {
+        if (isAdult) {
             newRoom[index].adult = newVal;
-        }else {
+        } else {
             newRoom[index].child = newVal;
         }
 
@@ -36,44 +36,50 @@ function RoomAllocation({ ...settings }: IRoomAllocationProperty) {
                 {
                     roomState.rooms.map((room: IRoomSheet, index: number) => {
                         return (
-                            <div key={index}>
-                                <div>
-                                    <InputNumber
-                                        min={1}
-                                        max={4}
-                                        disabled={roomState.total >= settings.guest}
-                                        name={`room${index + 1}`}
-                                        step={1}
-                                        value={room.adult}
-                                        onChange={(e) => {
-                                            if (parseInt(e.target.value) + room.child > 4) {
-                                                e.target.value = (4 - room.child).toString();
-                                            }
+                            <div key={index} className={`${styles.container}`}>
+                                <div className={`${styles.numb}`}>
+                                    <span>大人</span>
+                                    <div>
+                                        <InputNumber
+                                            min={1}
+                                            max={4}
+                                            disabled={roomState.total >= settings.guest}
+                                            name={`room${index + 1}`}
+                                            step={1}
+                                            value={room.adult}
+                                            onChange={(e) => {
+                                                if (parseInt(e.target.value) + room.child > 4) {
+                                                    e.target.value = (4 - room.child).toString();
+                                                }
 
-                                            changeGuestNumber(e, index, true);
-                                        }}
-                                        onBlur={(e) => {
-                                        }}
-                                    ></InputNumber>
+                                                changeGuestNumber(e, index, true);
+                                            }}
+                                            onBlur={(e) => {
+                                            }}
+                                        ></InputNumber>
+                                    </div>
                                 </div>
-                                <div>
-                                    <InputNumber
-                                        min={0}
-                                        max={4}
-                                        disabled={roomState.total == settings.guest}
-                                        name={`room${index + 1}`}
-                                        step={1}
-                                        value={room.child}
-                                        onChange={(e) => {
-                                            if (parseInt(e.target.value) + room.adult > 4) {
-                                                e.target.value = (4 - room.adult).toString();
-                                            }
+                                <div className={`${styles.numb}`}>
+                                    <span>小孩</span>
+                                    <div>
+                                        <InputNumber
+                                            min={0}
+                                            max={4}
+                                            disabled={roomState.total == settings.guest}
+                                            name={`room${index + 1}`}
+                                            step={1}
+                                            value={room.child}
+                                            onChange={(e) => {
+                                                if (parseInt(e.target.value) + room.adult > 4) {
+                                                    e.target.value = (4 - room.adult).toString();
+                                                }
 
-                                            changeGuestNumber(e, index, false);
-                                        }}
-                                        onBlur={(e) => {
-                                        }}
-                                    ></InputNumber>
+                                                changeGuestNumber(e, index, false);
+                                            }}
+                                            onBlur={(e) => {
+                                            }}
+                                        ></InputNumber>
+                                    </div>
                                 </div>
                             </div>
                         )

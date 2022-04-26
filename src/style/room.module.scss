@@ -1,4 +1,17 @@
 .main {
     width: 100%;
     max-width: 400px;
+
+    .container {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+        border: 1px dashed #000;
+    }
+
+    .numb {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        margin: 0.5rem 0;
+    }
 }
