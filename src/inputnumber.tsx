@@ -26,12 +26,14 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
     }
 
     const triggerChange = (newNum: number) => {
+        if (settings.disabled) return
+
         setNativeValue(inputRef.current, newNum);
         inputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
     }
 
     useEffect(() => {
-        setInputValue(settings.value);
+        setInputValue(checkNumber(settings.value));
 
         return () => cancelInterval();
     }, []);
@@ -43,30 +45,29 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
     }, [settings.step, settings.min, settings.max]);
 
     const onNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-        console.log("11");
         settings.onChange(e);
     }
 
     const reduce = (e: MouseEvent) => {
-        let checkedNumber = checkNumber(getInputValue() - 1);
-
+        let checkedNumber = checkNumber(getInputValue() - settings.step);
+        
         triggerChange(checkedNumber);
 
         if (!clickIntervalRef.current) {
             clickIntervalRef.current = setInterval(() => {
-                triggerChange(checkNumber(getInputValue() - 1));
+                triggerChange(checkNumber(getInputValue() - settings.step));
             }, 100);
         }
     }
 
     const plus = (e: MouseEvent) => {
-        let checkedNumber = checkNumber(getInputValue() + 1);
+        let checkedNumber = checkNumber(getInputValue() + settings.step);
 
         triggerChange(checkedNumber);
 
         if (!clickIntervalRef.current) {
             clickIntervalRef.current = setInterval(() => {
-                triggerChange(checkNumber(getInputValue() + 1));
+                triggerChange(checkNumber(getInputValue() + settings.step));
             }, 100);
         }
     }
@@ -89,7 +90,7 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
     }
 
     return (
-        <div className={styles.main}>
+        <div className={`${styles.main} ${settings.disabled ? styles.disabled : ""}`}>
             <button
                 onMouseDown={reduce}
                 onMouseUp={cancelInterval}
@@ -102,6 +103,7 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
                 name={settings.name}
                 onChange={onNumberChange}
                 onBlur={settings.onBlur}
+                disabled={settings.disabled}
             />
             <button
                 onMouseDown={plus}
@@ -120,6 +122,6 @@ interface IInputNumberProperty {
     name: string,
     value: number,
     disabled: boolean,
-    onChange: (e: ChangeEvent) => void,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void,
     onBlur: (e: FocusEvent) => void
 }
