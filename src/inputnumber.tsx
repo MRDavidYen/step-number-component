@@ -2,54 +2,111 @@ import React, { ChangeEvent, FocusEvent, MouseEvent, useEffect, useRef, useState
 import styles from "./style/inputnumber.module.css"
 
 function InputNumber({ ...settings }: IInputNumberProperty) {
-    const [numberVal, setNumberVal] = useState(settings.value);
     const clickIntervalRef = useRef(null);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const getInputValue = () => {
+        return parseInt(inputRef.current.value);
+    }
+
+    const setInputValue = (inputNum: number) => {
+        inputRef.current.value = inputNum.toString();
+    }
+
+    const setNativeValue = (element, value) => {
+        const valueSetter = Object.getOwnPropertyDescriptor(element, 'value').set;
+        const prototype = Object.getPrototypeOf(element);
+        const prototypeValueSetter = Object.getOwnPropertyDescriptor(prototype, 'value').set;
+
+        if (valueSetter && valueSetter !== prototypeValueSetter) {
+            prototypeValueSetter.call(element, value);
+        } else {
+            valueSetter.call(element, value);
+        }
+    }
+
+    const triggerChange = (newNum: number) => {
+        setNativeValue(inputRef.current, newNum);
+        inputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
+    }
 
     useEffect(() => {
-        checkNumber(numberVal);
+        setInputValue(settings.value);
+
+        return () => cancelInterval();
+    }, []);
+
+    useEffect(() => {
+        let checkedNumber = checkNumber(getInputValue());
+
+        setInputValue(checkedNumber);
     }, [settings.step, settings.min, settings.max]);
 
     const onNumberChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let inputNumber = parseInt(e.target.value);
-
-        if (inputNumber) {
-            checkNumber(inputNumber);
-        }
-
+        console.log("11");
         settings.onChange(e);
     }
 
     const reduce = (e: MouseEvent) => {
-        checkNumber(numberVal - 1);
+        let checkedNumber = checkNumber(getInputValue() - 1);
+
+        triggerChange(checkedNumber);
+
+        if (!clickIntervalRef.current) {
+            clickIntervalRef.current = setInterval(() => {
+                triggerChange(checkNumber(getInputValue() - 1));
+            }, 100);
+        }
     }
 
     const plus = (e: MouseEvent) => {
-        checkNumber(numberVal + 1);
+        let checkedNumber = checkNumber(getInputValue() + 1);
+
+        triggerChange(checkedNumber);
+
+        if (!clickIntervalRef.current) {
+            clickIntervalRef.current = setInterval(() => {
+                triggerChange(checkNumber(getInputValue() + 1));
+            }, 100);
+        }
     }
 
     const checkNumber = (inputNumber: number) => {
         if (inputNumber < settings.min) {
-            setNumberVal(settings.min);
+            inputNumber = settings.min;
         } else if (inputNumber > settings.max) {
-            setNumberVal(settings.max);
-        } else {
-            setNumberVal(inputNumber);
+            inputNumber = settings.max;
+        }
+
+        return inputNumber;
+    }
+
+    const cancelInterval = () => {
+        if (clickIntervalRef.current) {
+            clearInterval(clickIntervalRef.current);
+            clickIntervalRef.current = null;
         }
     }
 
     return (
         <div className={styles.main}>
-            <button onMouseDown={reduce}>-</button>
+            <button
+                onMouseDown={reduce}
+                onMouseUp={cancelInterval}
+            >-</button>
             <input type={"number"}
+                ref={inputRef}
                 step={settings.step}
                 max={settings.max}
                 min={settings.min}
-                value={numberVal}
                 name={settings.name}
                 onChange={onNumberChange}
                 onBlur={settings.onBlur}
             />
-            <button onMouseDown={plus}>+</button>
+            <button
+                onMouseDown={plus}
+                onMouseUp={cancelInterval}
+            >+</button>
         </div>
     )
 }

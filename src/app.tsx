@@ -10,7 +10,7 @@ export default function App() {
                 step={1}
                 name={"single"}
                 disabled={false}
-                value={1}
+                value={3}
                 onBlur={(e) => {
 
                 }}
