@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,KAAK,CAAC;EACF,KAAK,EAAE,IAAI;EACX,SAAS,EAAE,KAAK;EAChB,MAAM,EAAE,IAAI;EACZ,MAAM,EAAE,GAAG,CAAC,MAAM,CAAC,OAAkB;CACxC",
+    "sources": [
+        "inputnumber.module.scss"
+    ],
+    "names": [],
+    "file": "inputnumber.module.css"
+}
