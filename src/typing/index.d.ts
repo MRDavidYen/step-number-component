@@ -16,7 +16,8 @@ interface IRoomActions {
 interface IRoomPayload {
     input: IRoomSheet[],
     isAdult: boolean,
-    index: number
+    index: number,
+    roomNum: number
 }
 
 declare module '*.css' {

@@ -1,10 +1,22 @@
-import React, { ChangeEvent, useReducer } from "react"
+import React, { ChangeEvent, useEffect, useReducer } from "react"
 import useRoomAllocation from "./hooks/room.hook"
 import InputNumber from "./inputnumber";
 import styles from "./style/room.module.css"
 
 function RoomAllocation({ ...settings }: IRoomAllocationProperty) {
     const [roomState, roomDispatch] = useRoomAllocation(settings.room);
+
+    useEffect(() => {
+        roomDispatch({
+            type: "reset",
+            payload: {
+                index: 0,
+                input: [],
+                isAdult: false,
+                roomNum: settings.room
+            }
+        });
+    }, [settings.guest, settings.room]);
 
     const changeGuestNumber = (e: ChangeEvent<HTMLInputElement>, index: number, isAdult: boolean) => {
         let newVal = parseInt(e.target.value);
@@ -21,7 +33,8 @@ function RoomAllocation({ ...settings }: IRoomAllocationProperty) {
             payload: {
                 index: index,
                 input: newRoom,
-                isAdult: isAdult
+                isAdult: isAdult,
+                roomNum: settings.room
             }
         });
 

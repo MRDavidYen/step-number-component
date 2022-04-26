@@ -7,10 +7,25 @@ export default function useRoomAllocation(roomNumber: number): [IRoomStore, Reac
         switch (action.type) {
             case "updateRoom":
                 newState.rooms = action.payload.input;
-                
-                newState.total = newState.rooms.reduce((acc,item) => {
+
+                newState.total = newState.rooms.reduce((acc, item) => {
                     return acc + item.adult + item.child;
-                },0);
+                }, 0);
+
+                break
+            case "reset":
+                const roomArray = [...Array(roomNumber).keys()].map(() => {
+                    return {
+                        adult: 1,
+                        child: 0
+                    } as IRoomSheet
+                });
+
+                newState = {
+                    total: roomNumber,
+                    rooms: roomArray
+                }
+                break
         }
         return newState;
     }
