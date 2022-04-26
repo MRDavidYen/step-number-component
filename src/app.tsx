@@ -23,8 +23,8 @@ export default function App() {
             </div>
             <div>
                 <RoomAllocation
-                    guest={9}
-                    room={3}
+                    guest={15}
+                    room={5}
                     onChange={(result) => {
                         console.log(result)
                     }}

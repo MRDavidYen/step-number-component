@@ -4,6 +4,7 @@ import styles from "./style/inputnumber.module.css"
 function InputNumber({ ...settings }: IInputNumberProperty) {
     const clickIntervalRef = useRef(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const disabledRef = useRef(settings.disabled);
 
     const getInputValue = () => {
         return parseInt(inputRef.current.value);
@@ -25,8 +26,9 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
         }
     }
 
-    const triggerChange = (newNum: number) => {
-        if (settings.disabled) return
+    function triggerChange(newNum: number) {
+        console.log(disabledRef.current)
+        if (disabledRef.current) return
 
         setNativeValue(inputRef.current, newNum);
         inputRef.current.dispatchEvent(new Event('input', { bubbles: true }));
@@ -37,6 +39,10 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
 
         return () => cancelInterval();
     }, []);
+
+    useEffect(() => {
+        disabledRef.current = settings.disabled;
+    }, [settings.disabled]);
 
     useEffect(() => {
         let checkedNumber = checkNumber(getInputValue());
@@ -50,7 +56,7 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
 
     const reduce = (e: MouseEvent) => {
         let checkedNumber = checkNumber(getInputValue() - settings.step);
-        
+
         triggerChange(checkedNumber);
 
         if (!clickIntervalRef.current) {
@@ -94,6 +100,7 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
             <button
                 onMouseDown={reduce}
                 onMouseUp={cancelInterval}
+                onMouseLeave={cancelInterval}
             >-</button>
             <input type={"number"}
                 ref={inputRef}
@@ -108,6 +115,7 @@ function InputNumber({ ...settings }: IInputNumberProperty) {
             <button
                 onMouseDown={plus}
                 onMouseUp={cancelInterval}
+                onMouseLeave={cancelInterval}
             >+</button>
         </div>
     )

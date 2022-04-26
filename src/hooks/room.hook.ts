@@ -27,6 +27,7 @@ export default function useRoomAllocation(roomNumber: number): [IRoomStore, Reac
                 }
                 break
         }
+        
         return newState;
     }
 

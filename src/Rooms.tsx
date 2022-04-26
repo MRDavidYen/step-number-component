@@ -78,7 +78,7 @@ function RoomAllocation({ ...settings }: IRoomAllocationProperty) {
                                         <InputNumber
                                             min={0}
                                             max={4}
-                                            disabled={roomState.total == settings.guest}
+                                            disabled={roomState.total >= settings.guest}
                                             name={`room${index + 1}`}
                                             step={1}
                                             value={room.child}
